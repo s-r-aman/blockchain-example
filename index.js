@@ -34,6 +34,23 @@ class BlockChain {
     newBlock.hash = newBlock.calculateHash();
     this.chain.push(newBlock);
   }
+
+  isChainValid() {
+    for (const [iteration, iterator] of this.chain.entries()) {
+      if (iteration > 0) {
+        const currentBlock = iterator;
+        const previousBlock = this.chain[iteration - 1];
+
+        if (currentBlock.hash !== currentBlock.calculateHash()) {
+          return false;
+        }
+        if (currentBlock.hash !== previousBlock.hash) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
 
 let coin = new BlockChain();
@@ -43,3 +60,11 @@ coin.addBlock(new Block(1, '01/05/18', { key: 'value' }));
 coin.addBlock(new Block(2, '01/05/18', { key: 'value2' }));
 
 console.log(JSON.stringify(coin, null, 4));
+
+console.log('Is blockchain valid: ' + coin.isChainValid());
+
+coin.chain[1].data = { key: 'value3' }; //  Mutation
+
+console.log('Data has been informally Changed');
+
+console.log('Is blockchain valid: ' + coin.isChainValid());
