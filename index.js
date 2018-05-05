@@ -7,18 +7,34 @@ class Block {
     this.previosHash = previosHash;
     this.timestamp = timestamp;
     this.hash = this.calculateHash();
+    this.nonce = 0;
   }
 
   calculateHash() {
     return SHA256(
-      this.index + this.previosHash + this.timestamp + JSON.stringify(this.data)
+      this.index +
+        this.previosHash +
+        this.timestamp +
+        JSON.stringify(this.data) +
+        this.nonce
     ).toString();
+  }
+
+  mineBlock(difficulty) {
+    while (
+      this.hash.substring(0, difficulty) !== Array(difficulty + 1).join('0')
+    ) {
+      this.nonce++;
+      this.calculateHash();
+    }
+    console.log(this.hash);
   }
 }
 
 class BlockChain {
   constructor() {
     this.chain = [this.createInitialBlock()];
+    this.difficulty = 0;
   }
 
   createInitialBlock() {
@@ -31,7 +47,7 @@ class BlockChain {
 
   addBlock(newBlock) {
     newBlock.previosHash = this.getLatestBlock().hash;
-    newBlock.hash = newBlock.calculateHash();
+    newBlock.mineBlock(this.difficulty);
     this.chain.push(newBlock);
   }
 
@@ -40,7 +56,6 @@ class BlockChain {
       if (iteration > 0) {
         const currentBlock = iterator;
         const previousBlock = this.chain[iteration - 1];
-
         if (currentBlock.hash !== currentBlock.calculateHash()) {
           return false;
         }
@@ -61,10 +76,10 @@ coin.addBlock(new Block(2, '01/05/18', { key: 'value2' }));
 
 console.log(JSON.stringify(coin, null, 4));
 
-console.log('Is blockchain valid: ' + coin.isChainValid());
+// console.log('Is blockchain valid: ' + coin.isChainValid());
 
-coin.chain[1].data = { key: 'value3' }; //  Mutation
+// coin.chain[1].data = { key: 'value3' }; //  Mutation
 
-console.log('Data has been informally Changed');
+// console.log('Data has been informally Changed');
 
-console.log('Is blockchain valid: ' + coin.isChainValid());
+// console.log('Is blockchain valid: ' + coin.isChainValid());
