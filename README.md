@@ -1,2 +1,5 @@
-# blockchain-example
-This is a small program in JavaScript that demonstrate Block Chain.
+# Blockchain Playground 🔗 ▶▶
+
+Programs written in JavaScript.
+
+To run the program: `node index.js`
